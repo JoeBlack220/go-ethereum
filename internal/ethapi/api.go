@@ -382,11 +382,14 @@ func (s *PrivateAccountAPI) SendTransaction(ctx context.Context, args SendTxArgs
 		s.nonceLock.LockAddr(args.From)
 		defer s.nonceLock.UnlockAddr(args.From)
 	}
+	log.Info("In Private account api SendTransaction()")
 	signed, err := s.signTransaction(ctx, &args, passwd)
 	if err != nil {
 		log.Warn("Failed transaction send attempt", "from", args.From, "to", args.To, "value", args.Value.ToInt(), "err", err)
 		return common.Hash{}, err
 	}
+	log.Info("Leaving Private account api SendTransaction()")
+
 	return SubmitTransaction(ctx, s.b, signed)
 }
 
@@ -1574,7 +1577,7 @@ func SubmitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (c
 	} else {
 		log.Info("Submitted transaction", "fullhash", tx.Hash().Hex(), "recipient", tx.To())
 	}
-	log.Info("Returning transaction hash")
+	log.Info("Returning transaction hash ", tx.Hash().Hex())
 	return tx.Hash(), nil
 }
 
@@ -1583,6 +1586,7 @@ func SubmitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (c
 func (s *PublicTransactionPoolAPI) SendTransaction(ctx context.Context, args SendTxArgs) (common.Hash, error) {
 	// Look up the wallet containing the requested signer
 	account := accounts.Account{Address: args.From}
+	log.Info("In Public transaction pool api SendTransaction()")
 
 	wallet, err := s.b.AccountManager().Find(account)
 	if err != nil {
@@ -1607,6 +1611,8 @@ func (s *PublicTransactionPoolAPI) SendTransaction(ctx context.Context, args Sen
 	if err != nil {
 		return common.Hash{}, err
 	}
+	log.Info("Leaving Public transaction pool api SendTransaction()")
+
 	return SubmitTransaction(ctx, s.b, signed)
 }
 

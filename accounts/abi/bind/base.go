@@ -28,7 +28,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/event"
-	"github.com/ethereum/go-ethereum/log"
 )
 
 // SignerFn is a signer function callback when a contract requires a method to
@@ -204,7 +203,6 @@ func (c *BoundContract) Transfer(opts *TransactOpts) (*types.Transaction, error)
 // authorization fields, and then scheduling the transaction for execution.
 func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, input []byte) (*types.Transaction, error) {
 	var err error
-	log.Info("In transact() now")
 	// Ensure a valid value field and resolve the account nonce
 	value := opts.Value
 	if value == nil {
@@ -259,13 +257,10 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 		return nil, err
 	}
 
-	log.Info("Sending transaction now")
-
 	if err := c.transactor.SendTransaction(ensureContext(opts.Context), signedTx); err != nil {
 		return nil, err
 	}
 
-	log.Info("Returing from trasact()")
 	return signedTx, nil
 }
 
