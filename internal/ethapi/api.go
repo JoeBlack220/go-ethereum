@@ -1574,6 +1574,7 @@ func SubmitTransaction(ctx context.Context, b Backend, tx *types.Transaction) (c
 	} else {
 		log.Info("Submitted transaction", "fullhash", tx.Hash().Hex(), "recipient", tx.To())
 	}
+	log.Info("Returning transaction hash")
 	return tx.Hash(), nil
 }
 
